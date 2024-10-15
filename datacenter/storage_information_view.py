@@ -9,8 +9,10 @@ locale.setlocale(locale.LC_TIME, '')
 
 
 def format_duration(duration):
-    spend = duration.total_seconds()
-    return spend
+    seconds = duration.total_seconds()
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    return f'{hours:g}ч {minutes:g}мин'
 
 
 def storage_information_view(request):
