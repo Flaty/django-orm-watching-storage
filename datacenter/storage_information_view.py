@@ -1,19 +1,31 @@
 from datacenter.models import Passcard
 from datacenter.models import Visit
 from django.shortcuts import render
+from datacenter.models import get_duration
+from django.utils.timezone import localtime
+import locale
+
+locale.setlocale(locale.LC_TIME, '')
+
+
+def format_duration(duration):
+    spend = duration.total_seconds()
+    return spend
 
 
 def storage_information_view(request):
     # Программируем здесь
+    non_closed_visits = []
+    visitor = Visit.objects.filter(leaved_at=None)
+    for i in range(len(visitor)):
+        temp = dict()
+        temp['who_entered'] = visitor[i].passcard.owner_name
+        temp['entered_at'] = localtime(visitor[i].entered_at).strftime("%d %B %Y %H:%M")
+        temp['duration'] = format_duration(get_duration(visitor[i]))
+        non_closed_visits.append(temp)
 
-    non_closed_visits = [
-        {
-            'who_entered': 'Richard Shaw',
-            'entered_at': '11-04-2018 25:34',
-            'duration': '25:03',
-        }
-    ]
     context = {
         'non_closed_visits': non_closed_visits,  # не закрытые посещения
     }
+    print(non_closed_visits)
     return render(request, 'storage_information.html', context)
