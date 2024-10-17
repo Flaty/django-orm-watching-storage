@@ -31,13 +31,23 @@ class Visit(models.Model):
         )
 
 
+def is_visit_long(visit, minutes=60):
+    seconds_per_minute = 60
+    return (visit.total_seconds() / seconds_per_minute) > minutes
+
+
 def get_duration(visit):
-    duration = visit.entered_at
-    return localtime(now()) - localtime(duration)
+    entered = visit.entered_at
+    leaved = visit.leaved_at
+    if leaved is None:
+        return localtime(now()) - localtime(entered)
+    return localtime(leaved) - localtime(entered)
 
 
 def format_duration(duration):
     seconds = duration.total_seconds()
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
+    seconds_per_hour = 3600
+    seconds_per_minute = 60
+    hours = seconds // seconds_per_hour
+    minutes = (seconds % seconds_per_hour) // seconds_per_minute
     return f'{hours:g}ч {minutes:g}мин'
