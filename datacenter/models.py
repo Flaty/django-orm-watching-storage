@@ -34,3 +34,10 @@ class Visit(models.Model):
 def get_duration(visit):
     duration = visit.entered_at
     return localtime(now()) - localtime(duration)
+
+
+def format_duration(duration):
+    seconds = duration.total_seconds()
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    return f'{hours:g}ч {minutes:g}мин'
